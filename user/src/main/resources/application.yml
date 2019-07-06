@@ -1,0 +1,19 @@
+server:
+  port: 8001
+spring:
+   application:
+    name: user
+   datasource:
+    username: root
+    password: 123
+    url: jdbc:mysql://localhost:3306/ticket_db
+    driver-class-name: com.mysql.jdbc.Driver
+   jpa:
+    hibernate:
+      ddl-auto: update
+   activemq:
+    broker-url: tcp://192.168.25.133:61616
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://yami:123456@localhost:7001/eureka
