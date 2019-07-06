@@ -16,4 +16,6 @@ public interface OrderDao extends JpaRepository<Order,String>,JpaSpecificationEx
     List<Order> findOneByCustomerId(Long customerId);
 
     Order findOneByUuid(String uuid);
+
+    Order findOneById(Long id);
 }

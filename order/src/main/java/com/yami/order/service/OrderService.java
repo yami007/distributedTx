@@ -61,6 +61,24 @@ public class OrderService {
         order.setStatus("FINISH");
         orderDao.save(order);
     }
+    /**
+     * 订票失败
+     * @param orderDto
+     */
+    @Transactional
+    @JmsListener(destination = "order:fail",containerFactory = "msqFactory")
+    public void handleOrderFail(OrderDto orderDto){
+        Order order = null;
+        if(orderDto.getId() == null){
+            order = creatOrder(orderDto);
+            order.setStatus("FAIL");
+            order.setReason("TICKET_LOCK_FAIL");
+        }else {
+            order = orderDao.findOneById(orderDto.getId());
+            order.setStatus("FINISH");
+        }
+        orderDao.save(order);
+    }
 
     public Order creatOrder(OrderDto orderDto){
         Order order = new Order();

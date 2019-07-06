@@ -51,11 +51,14 @@ public class UserServer {
         PayInfo payInfo = payInfoDao.findOneByOrderId(dto.getId());
         if (payInfo != null) {
             logger.warn("该订单已经支付");
+            return;
         } else {
             // 判断用户余额是否足够支付订单
             User user = userDao.findOneById(dto.getCustomerId());
             if (user.getDeposit() < dto.getAmount()) {
                 logger.warn("该用户余额不足");
+                dto.setStatus("NOT_ENOUGH_DEPOSIT");
+                jmsTemplate.convertAndSend("order:unlock", dto);
                 return;
             }
             payInfo = new PayInfo();

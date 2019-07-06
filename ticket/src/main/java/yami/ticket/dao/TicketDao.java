@@ -30,4 +30,8 @@ public interface TicketDao extends JpaRepository<Ticket, String>, JpaSpecificati
     @Modifying
     @Query("update Ticket t set t.owner = ?1,t.lockUser=null where t.lockUser = ?1 and t.ticketNum = ?2")
     int moveTicket(Long customerId, Long ticketNum);
+
+    @Modifying
+    @Query("update Ticket t set t.lockUser=null where t.lockUser = ?1 and t.ticketNum = ?2")
+    int unLockTicket(Long customerId, Long ticketNum);
 }

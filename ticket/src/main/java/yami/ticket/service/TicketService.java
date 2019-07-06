@@ -44,7 +44,10 @@ public class TicketService {
             orderDto.setStatus("TICKET_LOCKED");
             jmsTemplate.convertAndSend("order:locked", orderDto);
         } else {
-
+            // 锁票失败后发送锁票失败的消息给order服务
+            logger.info("锁票失败：{}",orderDto.getTitle());
+            orderDto.setStatus("TICKET_LOCK_FAIL");
+            jmsTemplate.convertAndSend("order:fail", orderDto);
         }
     }
 
@@ -66,6 +69,24 @@ public class TicketService {
             orderDto.setStatus("TICKET_MOVE");
             jmsTemplate.convertAndSend("order:finish", orderDto);
         }
+    }
+
+    /**
+     * 解锁票
+     *
+     * @param orderDto
+     */
+    @Transactional
+    @JmsListener(destination = "order:unlock", containerFactory = "msqFactory")
+    public void handTicketUnlock(OrderDto orderDto) {
+        // 通过票号和用户id查询票，并叫锁票状态清空，更新票所有人为用户id
+        Ticket ticket = ticketDao.findOneByTicketNumAndLockUser(orderDto.getTicketNum(), orderDto.getCustomerId());
+        int count = ticketDao.unLockTicket(orderDto.getCustomerId(), ticket.getTicketNum());
+        if (count == 0) {
+            logger.warn("解锁失败：{}",orderDto.getTitle());
+        }
+        logger.info("解锁票：{}",orderDto.getTitle());
+        jmsTemplate.convertAndSend("order:fail", orderDto);
     }
 
     /**
