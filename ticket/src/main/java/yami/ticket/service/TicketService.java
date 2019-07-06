@@ -77,13 +77,17 @@ public class TicketService {
      * @param orderDto
      */
     @Transactional
-    @JmsListener(destination = "order:unlock", containerFactory = "msqFactory")
+    @JmsListener(destination = "order:ticket_error", containerFactory = "msqFactory")
     public void handTicketUnlock(OrderDto orderDto) {
         // 通过票号和用户id查询票，并叫锁票状态清空，更新票所有人为用户id
         Ticket ticket = ticketDao.findOneByTicketNumAndLockUser(orderDto.getTicketNum(), orderDto.getCustomerId());
         int count = ticketDao.unLockTicket(orderDto.getCustomerId(), ticket.getTicketNum());
         if (count == 0) {
             logger.warn("解锁失败：{}",orderDto.getTitle());
+        }
+        count = ticketDao.unMoveTicket(ticket.getOwner(), ticket.getTicketNum());
+        if (count == 0) {
+            logger.warn("票转移失败：{}",orderDto.getTitle());
         }
         logger.info("解锁票：{}",orderDto.getTitle());
         jmsTemplate.convertAndSend("order:fail", orderDto);

@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * 实体类
@@ -24,7 +24,7 @@ public class Order implements Serializable{
 	private int amount;
 	private String status;
 	private String reason;
-	private Date creatDate;
+	private ZonedDateTime creatDate;
 
 	public Long getId() {
 		return id;
@@ -90,11 +90,11 @@ public class Order implements Serializable{
 		this.reason = reason;
 	}
 
-	public Date getCreatDate() {
+	public ZonedDateTime getCreatDate() {
 		return creatDate;
 	}
 
-	public void setCreatDate(Date creatDate) {
+	public void setCreatDate(ZonedDateTime creatDate) {
 		this.creatDate = creatDate;
 	}
 }

@@ -4,6 +4,7 @@ import com.yami.order.dto.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -18,4 +19,6 @@ public interface OrderDao extends JpaRepository<Order,String>,JpaSpecificationEx
     Order findOneByUuid(String uuid);
 
     Order findOneById(Long id);
+
+    List<Order> findAllByStatusAndCreatDateBefore(String status, ZonedDateTime zonedDateTime);
 }

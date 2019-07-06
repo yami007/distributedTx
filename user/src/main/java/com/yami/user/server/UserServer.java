@@ -58,7 +58,7 @@ public class UserServer {
             if (user.getDeposit() < dto.getAmount()) {
                 logger.warn("该用户余额不足");
                 dto.setStatus("NOT_ENOUGH_DEPOSIT");
-                jmsTemplate.convertAndSend("order:unlock", dto);
+                jmsTemplate.convertAndSend("order:ticket_error", dto);
                 return;
             }
             payInfo = new PayInfo();
