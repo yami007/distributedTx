@@ -36,7 +36,7 @@ public class OrderController implements ArticleClientServer {
 	 * 查询全部数据
 	 * @return
 	 */
-	@RequestMapping(method= RequestMethod.GET)
+	@RequestMapping(value="/getAll",method= RequestMethod.GET)
 	public List<Order> findAll(){
 		return articleService.findAll();
 	}
@@ -57,12 +57,12 @@ public class OrderController implements ArticleClientServer {
 	 * 添加订单
 	 * @param order
 	 */
-	@RequestMapping(value = "/creat",method = RequestMethod.POST)
+	@RequestMapping(value = "creat",method = RequestMethod.POST)
 	public void add(@RequestBody OrderDto order  ){
 		UUID uuid = UUID.randomUUID();
 		order.setUuid(uuid.toString());
 		jmsTemplate.convertAndSend("order:new",order);
 	}
 
-	
+
 }

@@ -142,7 +142,7 @@ public class OrderService {
      * @return
      */
     public Order findById(String id) {
-        return orderDao.findOne(id);
+        return orderDao.findOneById(Long.valueOf(id));
     }
 
     /**
