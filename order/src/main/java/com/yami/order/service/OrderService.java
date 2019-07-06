@@ -36,6 +36,7 @@ public class OrderService {
     @Transactional
     @JmsListener(destination = "order:locked",containerFactory = "msqFactory")
     public void handleOrderNew(OrderDto orderDto){
+        // 如果通过uuid查询不到订单，说明该订单还未创建
         if(orderDao.findOneByUuid(orderDto.getUuid())!=null){
             logger.info("订单已经创建 :{}",orderDto.getTitle());
         }else {
@@ -53,7 +54,7 @@ public class OrderService {
      * @param orderDto
      */
     @Transactional
-    @JmsListener(destination = "order:locker",containerFactory = "msqFactory")
+    @JmsListener(destination = "order:finish",containerFactory = "msqFactory")
     public void handleOrderFinish(OrderDto orderDto){
         logger.info("完成订单：{}",orderDto);
         Order order = orderDao.findOneByUuid(orderDto.getUuid());

@@ -36,7 +36,9 @@ public class TicketService {
     @Transactional
     @JmsListener(destination = "order:new", containerFactory = "msqFactory")
     public void handTicketLock(OrderDto orderDto) {
+        // 数据库锁票操作
         int lockCount = ticketDao.LockTicket(orderDto.getCustomerId(), orderDto.getTicketNum());
+        // 锁票成功就发送消息
         if (lockCount == 1) {
             logger.info("锁票了：{}",orderDto.getTitle());
             orderDto.setStatus("TICKET_LOCKED");
@@ -54,6 +56,7 @@ public class TicketService {
     @Transactional
     @JmsListener(destination = "order:ticket_move", containerFactory = "msqFactory")
     public void handTicketMove(OrderDto orderDto) {
+        // 通过票号和用户id查询票，并叫锁票状态清空，更新票所有人为用户id
         Ticket ticket = ticketDao.findOneByTicketNumAndLockUser(orderDto.getTicketNum(), orderDto.getCustomerId());
         int count = ticketDao.moveTicket(orderDto.getCustomerId(), ticket.getTicketNum());
         if (count == 0) {

@@ -39,7 +39,7 @@ public class UserServer {
     }
 
     /**
-     * 付款
+     * 付款并更新用户金额
      *
      * @param dto
      */
@@ -47,11 +47,12 @@ public class UserServer {
     @JmsListener(destination = "order:pay", containerFactory = "msqFactory")
     public void handleOrderPay(OrderDto dto) {
         logger.info("开始支付订单金额：{}", dto.getTitle());
-
+        // 判断该订单是否已经支付
         PayInfo payInfo = payInfoDao.findOneByOrderId(dto.getId());
         if (payInfo != null) {
             logger.warn("该订单已经支付");
         } else {
+            // 判断用户余额是否足够支付订单
             User user = userDao.findOneById(dto.getCustomerId());
             if (user.getDeposit() < dto.getAmount()) {
                 logger.warn("该用户余额不足");
